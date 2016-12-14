@@ -1,0 +1,10 @@
+---
+- include: libvirt_base.yml
+  tags:
+    - libvirt:base
+- include: libvirt_nets.yml
+  tags:
+    - libvirt:nets
+- include: libvirt_pools.yml
+  tags:
+    - libvirt:pools

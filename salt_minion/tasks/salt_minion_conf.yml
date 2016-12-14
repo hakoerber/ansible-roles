@@ -1,0 +1,10 @@
+---
+- name: set up salt minion configuration
+  template:
+    dest: /etc/salt/minion
+    owner: root
+    group: root
+    mode: "0640"
+    src: templates/minion.j2
+  notify:
+    - restart salt minion

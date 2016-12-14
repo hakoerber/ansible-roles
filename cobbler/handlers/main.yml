@@ -1,0 +1,6 @@
+---
+- name: run cobbler sync
+  command: cobbler sync
+
+- name: restart cobbler
+  service: name={{ cobbler_service }} state=restarted

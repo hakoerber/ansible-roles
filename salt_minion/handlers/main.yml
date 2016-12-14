@@ -1,0 +1,3 @@
+---
+- name: restart salt minion
+  service: name={{ salt_minion_service }} state=restarted

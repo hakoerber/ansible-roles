@@ -1,0 +1,26 @@
+---
+- name: create logical volumes for machines
+  shell: virsh vol-create-as --pool {{ item.1.pool }} --name {{ item.1.name }} --format raw --capacity {{ item.1.size }}
+  args:
+    creates: /dev/{{( (libvirt.pools|selectattr("name", "equalto", item.1.pool))|first).vg }}/{{ item.1.name }}
+  when: item.1.type == 'lvm'
+  with_subelements:
+    - "{{ libvirt.machines }}"
+    - volumes
+
+- name: list rbd volumes
+  shell: virsh vol-info --pool {{ item.1.pool }} {{ item.1.name }} >/dev/null 2>&1
+  register: rbd_pools
+  when: item.1.type == 'rbd'
+  failed_when: false
+  changed_when: false
+  with_subelements:
+    - "{{ libvirt.machines }}"
+    - volumes
+
+- name: create rbd volumes
+  shell: virsh vol-create-as --pool {{ item.item.1.pool }} --name {{ item.item.1.name }} --format raw --capacity {{ item.item.1.size }}
+  when:
+    - not item.get('skipped', false)
+    - item.rc != 0
+  with_items: "{{ rbd_pools.results }}"

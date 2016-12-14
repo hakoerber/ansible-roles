@@ -1,0 +1,7 @@
+salt_minion_version: '2016.11'
+#salt_minion_gpg_url: 'https://repo.saltstack.com/yum/redhat/$releasever/$basearch/2016.11/SALTSTACK-GPG-KEY.pub'
+salt_minion_gpg_url: 'https://repo.saltstack.com/yum/redhat/7/x86_64/2016.11/SALTSTACK-GPG-KEY.pub'
+salt_minion_repo_url: 'https://repo.saltstack.com/yum/redhat/$releasever/$basearch/2016.11'
+salt_minion_packages:
+  - salt-minion
+salt_minion_service: salt-minion

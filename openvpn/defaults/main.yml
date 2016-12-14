@@ -1,0 +1,4 @@
+openvpn_service: 'openvpn@%s'
+openvpn_packages:
+  - openvpn
+nogroup: nobody

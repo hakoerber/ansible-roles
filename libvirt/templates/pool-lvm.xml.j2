@@ -1,0 +1,9 @@
+<pool type='logical'>
+  <name>{{ item.name }}</name>
+  <source>
+    <name>{{ item.vg }}</name>
+  </source>
+  <target>
+      <path>/dev/{{ item.vg }}</path>
+  </target>
+</pool>

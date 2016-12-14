@@ -1,0 +1,22 @@
+---
+- name: remove the default network
+  virt_net: name=default state=absent
+
+- name: define libvirt networks
+  virt_net:
+    name: "{{ item }}"
+    state: present
+    xml: "{{ lookup('template', 'templates/network.xml.j2') }}"
+  with_items: "{{ libvirt.networks }}"
+
+- name: start libvirt networks
+  virt_net:
+    name: "{{ item }}"
+    state: active
+  with_items: "{{ libvirt.networks }}"
+
+- name: autostart the libvirt networks
+  virt_net:
+    name: "{{ item }}"
+    autostart: "yes"
+  with_items: "{{ libvirt.networks }}"

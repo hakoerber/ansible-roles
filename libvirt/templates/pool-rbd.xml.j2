@@ -1,0 +1,12 @@
+<pool type='rbd'>
+    <name>{{ item.name }}</name>
+    <source>
+        <name>{{ item.pool }}</name>
+        {% for mon in item.monitors %}
+        <host name='{{ mon }}'/>
+        {% endfor %}
+        <auth username='{{ item.user }}' type='ceph'>
+        <secret uuid='{{ item.secret }}'/>
+        </auth>
+    </source>
+</pool>

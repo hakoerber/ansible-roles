@@ -1,0 +1,15 @@
+---
+- name: get cobbler systems
+  command: cobbler system list
+  register: cobbler_systems
+
+- name: remove unmanaged cobbler systems
+  command: cobbler system remove --name {{ item }}
+  when: item not in cobbler.systems|map(attribute='name')
+  with_items: "{{ cobbler_systems.stdout_lines|map('trim')|list }}"
+
+- name: manage cobbler systems
+  command: cobbler system add --clobber --name={{ item.name }} --profile={{ item.profile }} --kickstart={{ item.kickstart }} --interface=eth0 --mac={{ item.network.mac }}{{ ' --interface eth0.' + item.network.vlan|string if item.network.vlan is defined else '' }} --management=True --kopts="ifname={{ item.network.bootdev }}:{{ item.network.mac }} {{ 'vlan=' + item.network.bootdev + '.' + item.network.vlan|string + ':' + item.network.bootdev + ' ksdevice=' + item.network.bootdev + '.' + item.network.vlan|string + ' ip=' + item.network.bootdev + '.' + item.network.vlan|string + ':dhcp' if item.network.vlan is defined else 'ksdevice=' + item.network.bootdev + ' ip=' + item.network.bootdev + ':dhcp' }} {{ item.get('kernel_options', '') }}"
+  with_items: "{{ cobbler.systems }}"
+  loop_control:
+    label: "{{ item.name }}"

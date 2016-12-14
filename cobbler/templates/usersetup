@@ -1,0 +1,19 @@
+# create sudo group
+groupadd --system sudo
+echo '%sudo ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+echo 'Defaults:%sudo !requiretty' >> /etc/sudoers
+
+# create initial user
+useradd --create-home --home-dir /home/$me --groups sudo --user-group $me
+
+# Disable password and root login for SSH
+sed -i -e 's/^PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+echo 'PermitRootLogin no' >> /etc/ssh/sshd_config
+mkdir --parents --mode 700 /home/$me/.ssh
+cat > /home/$me/.ssh/authorized_keys << EOF
+$sshkey
+EOF
+
+# fix permissions
+chmod 600 /home/$me/.ssh/authorized_keys
+chown -R $me:$me /home/$me

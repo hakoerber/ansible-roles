@@ -1,0 +1,10 @@
+---
+- include: vms_volumes.yml
+  tags:
+    - vms:volumes
+- include: vms_define.yml
+  tags:
+    - vms:define
+- include: vms_start.yml
+  tags:
+    - vms:start

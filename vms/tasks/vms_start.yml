@@ -1,0 +1,5 @@
+---
+- name: start the machines
+  become: no
+  virt: name={{ item.name }} state=running
+  with_items: "{{ libvirt.machines }}"

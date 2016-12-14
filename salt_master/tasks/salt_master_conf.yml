@@ -1,0 +1,17 @@
+---
+- name: set up salt master configuration
+  template:
+    dest: /etc/salt/master
+    owner: root
+    group: root
+    mode: "0640"
+    src: templates/master.j2
+  notify:
+    - restart salt master
+
+- name: create salt master user
+  user:
+    name: saltmaster
+    home: /var/lib/saltmaster
+    shell: /bin/bash
+    system: true

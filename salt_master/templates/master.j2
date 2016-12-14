@@ -1,0 +1,74 @@
+default_include: /etc/salt/master.d/*.conf
+
+# connectivity
+interface: 0.0.0.0
+ipv6: False
+publish_port: 4505
+ret_port: 4506
+
+# paths
+root_dir: /
+pidfile:  /var/lib/saltmaster/salt-master.pid
+pki_dir:  /etc/salt/pki/master
+cachedir: /var/cache/salt/master
+sock_dir: /var/run/salt/master
+log_file: /var/log/salt/master
+
+user: saltmaster
+
+# workers
+worker_threads: 10
+loop_interval: 60
+
+# caching and jobs
+keep_jobs: 24
+job_cache: True
+minion_data_cache: True
+con_cache: True
+
+# security
+verify_env: True
+max_minions: 0
+open_mode: False
+auto_accept: False
+file_recv: False
+rotate_aes_key: True
+
+# states
+renderer: yaml_jinja
+jinja_trim_blocks: True
+jinja_lstrip_blocks: True
+failhard: False
+state_verbose: True
+state_output: changes
+state_aggregate: False
+color: True
+yaml_utf8: True
+
+# logging
+log_level: warning
+log_level_logfile: warning
+log_datefmt: '%H:%M:%S'
+log_datefmt_logfile: '%Y-%m-%dT%H:%M:%S'
+
+# misc
+presence_events: False
+hash_type: sha256
+
+# fileserver
+fileserver_backend:
+  - roots
+
+ext_pillar:
+  - stack:
+      - /var/lib/saltmaster/srv/base.cfg
+      - /var/lib/saltmaster/srv/nodes.cfg
+      - /var/lib/saltmaster/srv/roles.cfg
+  - file_tree:
+      root_dir: /var/lib/saltmaster/srv/pillar/files
+      keep_newline: True
+
+
+file_roots:
+  base:
+    - /var/lib/saltmaster/srv/root

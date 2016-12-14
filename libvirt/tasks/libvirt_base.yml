@@ -1,0 +1,15 @@
+---
+- name: install libvirt
+  package: name={{ item }} state=latest
+  with_items:
+    - libvirt
+    - qemu-kvm
+    - libvirt-python
+    - python-lxml
+
+- name: add users to libvirt group
+  user: name={{ item }} groups=libvirt append=yes
+  with_items: "{{ libvirt.allowed_users }}"
+
+- name: start and enable libvirt
+  service: name=libvirtd state=started enabled=yes

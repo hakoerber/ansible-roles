@@ -1,0 +1,27 @@
+DEVICE={{ item.name }}
+ONBOOT=yes
+BOOTPROTO=none
+USERCTL=no
+HWADDR={{ item.mac }}
+{% if item.master is defined %}
+MASTER={{ item.master }}
+SLAVE=yes
+{% endif %}
+{% if item.bridge is defined %}
+BRIDGE={{ item.bridge }}
+{% endif %}
+{% if item.mode is defined %}
+{% if item.mode == 'static' %}
+IPADDR={{ item.ip }}
+NETMASK={{ item.netmask }}
+{% if item.gateway is defined %}
+GATEWAY={{ item.gateway }}
+{% endif %}
+{% if item.nameserver is defined %}
+DNS1={{ item.nameserver }}
+{% endif %}
+{% if item.nameserver_secondary is defined %}
+DNS2={{ item.nameserver_secondary }}
+{% endif %}
+{% endif %}
+{% endif %}

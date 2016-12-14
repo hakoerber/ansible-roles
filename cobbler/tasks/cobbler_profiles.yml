@@ -1,0 +1,15 @@
+---
+- name: get cobbler profiles
+  command: cobbler profile list
+  register: cobbler_profiles
+
+- name: remove unmanaged cobbler profiles
+  command: cobbler profile remove --name {{ item }}
+  when: item not in cobbler.profiles|map(attribute='name')
+  with_items: "{{ cobbler_profiles.stdout_lines|map('trim')|list }}"
+
+- name: manage cobbler profiles
+  command: cobbler profile add --clobber --name={{ item.name }} --distro={{ item.distro }} --ksmeta="{{ item.ksmeta|join(' ') }}"
+  with_items: "{{ cobbler.profiles }}"
+  loop_control:
+    label: "{{ item.name }}"

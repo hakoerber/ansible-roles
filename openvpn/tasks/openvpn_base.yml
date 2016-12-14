@@ -1,0 +1,14 @@
+---
+- name: install openvpn
+  package: name={{ openvpn_packages }} state=latest
+
+- name: start and enable openvpn (systemd-like)
+  service: name={{ openvpn_service|format('p2p-' + vpn.name) }} enabled=yes
+  when: "{{ '%s' in openvpn_service }}"
+  with_items: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+
+- name: start and enable openvpn
+  service: name={{ openvpn_service }} enabled=yes
+  when: "{{ '%s' not in openvpn_service }}"

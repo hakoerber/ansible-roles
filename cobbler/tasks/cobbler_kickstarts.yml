@@ -1,0 +1,29 @@
+---
+- name: manage kickstarts
+  synchronize:
+    dest: /var/lib/cobbler/kickstarts/
+    delete: yes
+    src: files/kickstarts/
+
+- name: manage network kickstart snippets
+  template:
+    dest: /var/lib/cobbler/snippets/network-{{ item.name }}
+    owner: root
+    group: root
+    mode: "0644"
+    src: templates/network.j2
+  with_items: "{{ cobbler.systems }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: manage storage kickstart snippets
+  template:
+    dest: /var/lib/cobbler/snippets/storage-{{ item.name }}
+    owner: root
+    group: root
+    mode: "0644"
+    src: templates/storage.j2
+  with_items: "{{ cobbler.systems }}"
+  loop_control:
+    label: "{{ item.name }}"
+

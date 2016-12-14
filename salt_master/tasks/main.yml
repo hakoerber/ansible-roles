@@ -1,0 +1,7 @@
+---
+- include: salt_master_base.yml
+  tags:
+    - salt:master:base
+- include: salt_master_conf.yml
+  tags:
+    - salt:master:conf

@@ -1,0 +1,8 @@
+---
+- block:
+  - include: openvpn_base.yml
+    tags:
+      - vpn:base
+  - include: openvpn_conf.yml
+    tags:
+      - vpn:conf

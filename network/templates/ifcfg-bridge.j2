@@ -1,0 +1,22 @@
+DEVICE={{ item.name }}
+ONBOOT=yes
+TYPE=Bridge
+{% set mode = item.mode|default('none') %}
+{% if mode == 'static' %}
+IPADDR={{ item.ip }}
+NETMASK={{ item.netmask }}
+BOOTPROTO=none
+{% if item.gateway is defined %}
+GATEWAY={{ item.gateway }}
+{% endif %}
+{% if item.nameserver is defined %}
+DNS1={{ item.nameserver }}
+{% endif %}
+{% if item.nameserver_secondary is defined %}
+DNS2={{ item.nameserver_secondary }}
+{% endif %}
+{% elif mode == 'dhcp' %}
+BOOTPROTO=dhcp
+{% elif mode == 'none' %}
+BOOTPROTO=none
+{% endif %}

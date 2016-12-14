@@ -1,0 +1,11 @@
+---
+- name: restart openvpn (systemd-like)
+  service: name={{ openvpn_service|format('p2p-' + vpn.name) }} state=restarted
+  when: "{{ '%s' in openvpn_service }}"
+  with_items: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+
+- name: restart openvpn
+  service: name={{ openvpn_service }} state=restarted
+  when: "{{ '%s' not in openvpn_service }}"

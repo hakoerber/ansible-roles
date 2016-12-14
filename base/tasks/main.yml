@@ -1,0 +1,4 @@
+---
+- include: required_packages.yml
+  tags:
+    - base:required_packages

@@ -1,0 +1,27 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version | int}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+    - "default.yml"
+
+- name: import salt repository gpg key
+  get_url:
+    dest: '/etc/pki/rpm-gpg/saltstack-signing-key'
+    url: "{{ salt_minion_gpg_url }}"
+
+- name: set up salt repository
+  yum_repository:
+    baseurl: "{{ salt_minion_repo_url }}"
+    gpgkey: 'file:///etc/pki/rpm-gpg/saltstack-signing-key'
+    gpgcheck: true
+    name: "salt-{{ salt_minion_version }}"
+    description: "salt-{{ salt_minion_version }}"
+
+- name: install salt minion
+  package: name={{ item }} state=latest
+  with_items: "{{ salt_minion_packages }}"
+
+- name: start and enable salt minion
+  service: name={{ salt_minion_service }} state=started enabled=yes

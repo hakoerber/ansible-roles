@@ -1,0 +1,17 @@
+DEVICE={{ item.name }}
+ONBOOT=yes
+BOOTPROTO=none
+TYPE=Tap
+USERCTL=no
+{% if item.owner is defined %}
+OWNER={{ item.owner }}
+{% endif %}
+{% if item.bridge is defined %}
+BRIDGE={{ item.bridge }}
+{% endif %}
+{% if item.mode is defined %}
+{% if item.mode == 'static' %}
+IPADDR={{ item.ip }}
+NETMASK={{ item.netmask }}
+{% endif %}
+{% endif %}

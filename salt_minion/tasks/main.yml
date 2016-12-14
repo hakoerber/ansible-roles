@@ -1,0 +1,7 @@
+---
+- include: salt_minion_base.yml
+  tags:
+    - salt:minion:base
+- include: salt_minion_conf.yml
+  tags:
+    - salt:minion:conf

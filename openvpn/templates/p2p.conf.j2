@@ -1,0 +1,46 @@
+port {{ vpn.port }}
+{% if vpn.get('ipv6', false) %}
+proto {{ vpn.protocol }}6
+{% else %}
+proto {{ vpn.protocol }}
+{% endif %}
+dev {{ vpn.devname }}
+dev-type {{ vpn.dev }}
+
+# files
+secret keys/{{ vpn.name }}/secret.key
+
+{% if vpn.my_role == 'client' %}
+# servers
+nobind
+<connection>
+remote {{ vpn.server }}
+</connection>
+{% endif %}
+
+# connection specifics
+mode p2p
+ping 10
+{% if vpn.my_role == 'client' %}
+ping-restart 30
+{% else %}
+ping-restart 60
+{% endif %}
+resolv-retry infinite
+ping-timer-rem
+comp-lzo
+cipher AES-256-CBC
+auth SHA256
+
+# logging
+log /var/log/openvpn-p2p-{{ vpn.name }}.log
+status /var/run/openvpn/status-p2p-{{ vpn.name }} 10
+verb 4
+mute 20
+mute-replay-warnings
+
+# misc
+user nobody
+group {{ nogroup }}
+persist-key
+persist-tun

@@ -1,0 +1,7 @@
+---
+- name: manage settings
+  command: cobbler import --name={{ item.name }} --arch={{ item.arch|default('x86_64') }} --path=/mnt
+  with_items:
+    - "{{ cobbler.distros }}"
+  loop_control:
+    label: "{{ item.name }}"

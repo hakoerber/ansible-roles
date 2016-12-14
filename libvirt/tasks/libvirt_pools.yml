@@ -1,0 +1,22 @@
+---
+- name: remove the default pool
+  virt_pool: name=default state=undefined
+
+- name: set up libvirt pools
+  virt_pool:
+    name: "{{ item.name }}"
+    state: present
+    xml: "{{ lookup('template', 'templates/pool-' + item.type + '.xml.j2') }}"
+  with_items: "{{ libvirt.pools }}"
+
+- name: start libvirt pools
+  virt_pool:
+    name: "{{ item.name }}"
+    state: active
+  with_items: "{{ libvirt.pools }}"
+
+- name: autostart the libvirt pools
+  virt_pool:
+    name: "{{ item.name }}"
+    autostart: "yes"
+  with_items: "{{ libvirt.pools }}"

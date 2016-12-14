@@ -1,0 +1,27 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version | int}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+    - "default.yml"
+
+- name: import salt repository gpg key
+  get_url:
+    dest: '/etc/pki/rpm-gpg/saltstack-signing-key'
+    url: "{{ salt_master_gpg_url }}"
+
+- name: set up salt repository
+  yum_repository:
+    baseurl: "{{ salt_master_repo_url }}"
+    gpgkey: 'file:///etc/pki/rpm-gpg/saltstack-signing-key'
+    gpgcheck: true
+    name: "salt-{{ salt_master_version }}"
+    description: "salt-{{ salt_master_version }}"
+
+- name: install salt master
+  package: name={{ item }} state=latest
+  with_items: "{{ salt_master_packages }}"
+
+- name: start and enable salt master
+  service: name={{ salt_master_service }} state=started enabled=yes

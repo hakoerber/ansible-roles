@@ -1,0 +1,63 @@
+<domain type='kvm'>
+  <name>{{ item.name }}</name>
+  <memory unit='KiB'>{{ item.memory }}</memory>
+  <currentMemory unit='KiB'>{{ item.memory }}</currentMemory>
+  <vcpu placement='static'>1</vcpu>
+  <os>
+    <type arch='x86_64'>hvm</type>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <disk type='volume' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source pool='{{ item.volumes.0.pool }}' volume='virt-{{ item.name }}'/>
+      <target dev='vda' bus='virtio'/>
+      <boot order='1'/>
+    </disk>
+    {% if item.osd is defined %}
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native'/>
+      <source dev='/dev/disk/by-id/{{ item.osd.disk_id }}'/>
+      <target dev='vdb' bus='virtio'/>
+    </disk>
+    <disk type='volume' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source pool='{{ item.volumes.1.pool }}' volume='virt-{{ item.name }}-journal'/>
+      <target dev='vdc' bus='virtio'/>
+    </disk>
+    {% endif %}
+    <interface type='network'>
+      <source network='cluster'/>
+      <mac address='{{ item.mac_cluster }}'/>
+      <model type='virtio'/>
+      <driver name='vhost'/>
+    </interface>
+    <interface type='network'>
+      <source network='storage'/>
+      <mac address='{{ item.mac_storage }}'/>
+      <model type='virtio'/>
+      <driver name='vhost'/>
+      <boot order='2'/>
+    </interface>
+    <input type='tablet' bus='usb'/>
+    <input type='keyboard' bus='usb'/>
+    <channel type='spicevmc'>
+      <target type='virtio'/>
+    </channel>
+    <graphics type='spice' autoport='yes' listen='127.0.0.1'>
+      <listen type='address' address='127.0.0.1'/>
+    </graphics>
+    <video>
+      <model type='qxl'/>
+    </video>
+  </devices>
+</domain>

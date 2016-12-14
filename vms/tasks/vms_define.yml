@@ -1,0 +1,8 @@
+---
+- name: define the machines
+  become: no
+  virt:
+    name: "{{ item.name }}"
+    command: define
+    xml: "{{ lookup('template', 'templates/domain-' + item.type + '.xml.j2') }}"
+  with_items: "{{ libvirt.machines }}"

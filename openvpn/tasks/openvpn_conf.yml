@@ -1,0 +1,53 @@
+- name: set up the openvpn config
+  template:
+    dest: /etc/openvpn/p2p-{{ vpn.name }}.conf
+    owner: root
+    group: root
+    mode: "0600"
+    src: templates/p2p.conf.j2
+  notify:
+    - restart openvpn
+    - restart openvpn (systemd-like)
+  with_items: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+
+- name: set up the openvpn key directory
+  file:
+    state: directory
+    dest: /etc/openvpn/keys
+    owner: root
+    group: root
+    mode: "0700"
+  notify:
+    - restart openvpn
+    - restart openvpn (systemd-like)
+
+- name: set up the openvpn vpn-specific key directory
+  file:
+    state: directory
+    dest: /etc/openvpn/keys/{{ vpn.name }}
+    owner: root
+    group: root
+    mode: "0700"
+  notify:
+    - restart openvpn
+    - restart openvpn (systemd-like)
+  with_items: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+
+- name: set up the openvpn key
+  copy:
+    dest: /etc/openvpn/keys/{{ vpn.name }}/secret.key
+    owner: root
+    group: root
+    mode: "0400"
+    content: "{{ vpn.key }}"
+  notify:
+    - restart openvpn
+    - restart openvpn (systemd-like)
+  with_items: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+

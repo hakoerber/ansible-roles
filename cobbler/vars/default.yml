@@ -1,0 +1,7 @@
+cobbler_packages:
+  - cobbler
+  - cobbler-web
+  - bind9
+  - isc-dhcp-server
+  - syslinux-common
+cobbler_service: cobbler

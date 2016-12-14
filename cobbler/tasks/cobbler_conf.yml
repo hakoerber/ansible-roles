@@ -1,0 +1,20 @@
+---
+- name: manage settings
+  template:
+    dest: /etc/cobbler/settings
+    owner: root
+    group: root
+    mode: "0644"
+    src: templates/settings.j2
+  notify:
+    - restart cobbler
+
+- name: manage dhcp template
+  template:
+    dest: /etc/cobbler/dhcp.template
+    owner: root
+    group: root
+    mode: "0644"
+    src: templates/dhcp.template.j2
+  notify:
+    - run cobbler sync

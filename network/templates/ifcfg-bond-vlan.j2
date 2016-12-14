@@ -1,0 +1,13 @@
+DEVICE={{ item.parent }}.{{ item.vlan }}
+ONBOOT=yes
+{% if item.mode == 'static' %}
+IPADDR={{ item.ip }}
+NETMASK={{ item.netmask }}
+{% elif item.mode == 'dhcp' %}
+BOOTPROTO=dhcp
+{% elif item.mode == 'none' %}
+BOOTPROTO=none
+{% endif %}
+TYPE=None
+VLAN=yes
+USERCTL=no

@@ -1,0 +1,25 @@
+---
+- include: cobbler_base.yml
+  tags:
+    - cobbler:base
+
+- include: cobbler_conf.yml
+  tags:
+    - cobbler:conf
+
+- include: cobbler_distros.yml
+  tags:
+    - cobbler:distros
+  when: False
+
+- include: cobbler_profiles.yml
+  tags:
+    - cobbler:profiles
+
+- include: cobbler_systems.yml
+  tags:
+    - cobbler:systems
+
+- include: cobbler_kickstarts.yml
+  tags:
+    - cobbler:kickstarts

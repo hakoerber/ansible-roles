@@ -1,0 +1,6 @@
+salt_master_version: '2016.11'
+salt_master_gpg_url: 'https://repo.saltstack.com/yum/rhel7/SALTSTACK-GPG-KEY.pub'
+salt_master_repo_url: 'https://repo.saltstack.com/yum/redhat/$releasever/$basearch/2016.11'
+salt_master_packages:
+  - salt-master
+salt_master_service: salt-master

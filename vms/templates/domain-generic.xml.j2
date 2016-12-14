@@ -1,0 +1,59 @@
+<domain type='kvm'>
+  <name>{{ item.name }}</name>
+  <memory unit='KiB'>{{ item.memory }}</memory>
+  <currentMemory unit='KiB'>{{ item.memory }}</currentMemory>
+  <vcpu placement='static'>{{ item.vcpu }}</vcpu>
+  <os>
+    <type arch='x86_64'>hvm</type>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    {% for volume in item.volumes %}
+    <disk type='network' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source protocol='rbd' name='{{ volume.pool }}/{{ volume.name }}'>
+        {% for monitor in volume.monitors %}
+        <host name='{{ monitor }}'/>
+        {% endfor %}
+      </source>
+      <auth username='{{ volume.user }}'>
+      <secret type='ceph' uuid='{{ volume.secret }}'/>
+      </auth>
+      <target dev='{{ volume.devname }}' bus='virtio'/>
+      {% if volume.get('boot', False) %}
+      <boot order='1'/>
+      {% endif %}
+    </disk>
+    {% endfor %}
+    {% for interface in item.interfaces %}
+    <interface type='network'>
+      <source network='{{ interface.network }}'/>
+      <mac address='{{ interface.mac }}'/>
+      <model type='virtio'/>
+      {% if interface.get('boot', False) %}
+      <boot order='2'/>
+      {% endif %}
+    </interface>
+    {% endfor %}
+    <input type='tablet' bus='usb'/>
+    <input type='keyboard' bus='usb'/>
+    <channel type='spicevmc'>
+      <target type='virtio'/>
+    </channel>
+    <graphics type='spice' autoport='yes' listen='127.0.0.1'>
+      <listen type='address' address='127.0.0.1'/>
+    </graphics>
+    <video>
+      <model type='qxl'/>
+    </video>
+  </devices>
+</domain>

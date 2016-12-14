@@ -1,0 +1,88 @@
+---
+- name: set hostname
+  hostname: name={{ inventory_hostname }}
+  tags:
+    - network:hostname
+- name: configure base interfaces
+  template:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.name }}
+    owner: root
+    group: root
+    mode: 0644
+    src: templates/ifcfg-base.j2
+  with_items: "{{ network.interfaces.get('physical', []) }}"
+  notify: restart networking
+  tags:
+    - network:interfaces
+- name: configure tap interfaces
+  template:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.name }}
+    owner: root
+    group: root
+    mode: 0644
+    src: templates/ifcfg-tap.j2
+  with_items: "{{ network.interfaces.get('tap', []) }}"
+  notify: restart networking
+  tags:
+    - network:interfaces
+- name: configure bonding interfaces
+  template:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.name }}
+    owner: root
+    group: root
+    mode: 0644
+    src: templates/ifcfg-bond.j2
+  with_items: "{{ network.interfaces.get('bonds', []) }}"
+  notify: restart networking
+  tags:
+    - network:interfaces
+- name: configure bonding vlan interfaces
+  template:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.parent }}.{{ item.vlan }}
+    owner: root
+    group: root
+    mode: 0644
+    src: templates/ifcfg-bond-vlan.j2
+  with_items: "{{ network.interfaces.get('bond_vlans', []) }}"
+  notify: restart networking
+  tags:
+    - network:interfaces
+- name: install bridge-utils
+  package: name=bridge-utils state=latest
+  when: network.interfaces.bridges is defined
+- name: configure bonding vlan interfaces for bridges
+  template:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.slave }}.{{ item.vlan_id }}
+    owner: root
+    group: root
+    mode: 0644
+    src: templates/ifcfg-bond-vlan-for-bridge.j2
+  when: "{{ item.get('vlan_id') }}"
+  with_items: "{{ network.interfaces.get('bridges', []) }}"
+  notify: restart networking
+  tags:
+    - network:interfaces
+- name: configure bridges
+  template:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.name }}
+    owner: root
+    group: root
+    mode: 0644
+    src: templates/ifcfg-bridge.j2
+  with_items: "{{ network.interfaces.get('bridges', []) }}"
+  notify: restart networking
+  tags:
+    - network:interfaces
+- name: configure static routes
+  template:
+    dest: /etc/sysconfig/network-scripts/route-{{ item.device }}
+    owner: root
+    group: root
+    mode: 0644
+    src: templates/route.j2
+  with_items: "{{ network.get('routes', {}) }}"
+  notify: restart networking
+  tags:
+    - network:interfaces
+
+- meta: flush_handlers

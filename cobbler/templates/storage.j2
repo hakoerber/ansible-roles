@@ -1,0 +1,22 @@
+ignoredisk --only-use={{ item.storage.disks|join(',') }}
+
+zerombr
+
+bootloader --location=mbr --boot-drive={{ item.storage.disks[0] }}
+clearpart --all --initlabel
+
+{% for part in item.storage.partitions %}
+part {{ part.name }} --fstype={{ part.type }} --ondrive={{ part.disk }} {{ '--grow' if part.size == 'grow' else '--size=' + part.size|string }}
+{% endfor %}
+
+{% for raid in item.storage.raids|default([]) %}
+raid {{ raid.name }} --level={{ raid.level }} --device={{ raid.device }} --fstype={{ raid.type }} {{ raid.partitions|join(' ') }}
+{% endfor %}
+
+{% for vg in item.storage.lvm.vgs %}
+volgroup {{ vg.name }} {{ vg.pv }}
+{% endfor %}
+
+{% for logvol in item.storage.lvm.logvols %}
+logvol {{ logvol.mountpoint }} --vgname={{ logvol.vg }} --name={{ logvol.name }} --size={{ logvol.size|string }} {{ '--fstype=' + logvol.fs if logvol.fs is defined else '' }} {{ '--grow' if logvol.grow|default(False) else '' }}
+{% endfor %}
