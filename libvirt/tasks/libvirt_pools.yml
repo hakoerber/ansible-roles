@@ -8,15 +8,21 @@
     state: present
     xml: "{{ lookup('template', 'templates/pool-' + item.type + '.xml.j2') }}"
   with_items: "{{ libvirt.pools }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: start libvirt pools
   virt_pool:
     name: "{{ item.name }}"
     state: active
   with_items: "{{ libvirt.pools }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: autostart the libvirt pools
   virt_pool:
     name: "{{ item.name }}"
     autostart: "yes"
   with_items: "{{ libvirt.pools }}"
+  loop_control:
+    label: "{{ item.name }}"
