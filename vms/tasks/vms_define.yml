@@ -6,3 +6,5 @@
     command: define
     xml: "{{ lookup('template', 'templates/domain-' + item.type + '.xml.j2') }}"
   with_items: "{{ libvirt.machines }}"
+  loop_control:
+    label: "{{ item.name }}"
