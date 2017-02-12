@@ -2,6 +2,7 @@
 - name: get cobbler profiles
   command: cobbler profile list
   register: cobbler_profiles
+  changed_when: False
 
 - name: remove unmanaged cobbler profiles
   command: cobbler profile remove --name {{ item }}

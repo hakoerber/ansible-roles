@@ -2,6 +2,7 @@
 - name: get cobbler systems
   command: cobbler system list
   register: cobbler_systems
+  changed_when: False
 
 - name: remove unmanaged cobbler systems
   command: cobbler system remove --name {{ item }}
