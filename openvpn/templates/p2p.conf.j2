@@ -34,6 +34,7 @@ cipher AES-256-CBC
 auth SHA256
 
 # logging
+writepid /var/run/openvpn/p2p-{{ vpn.name }}.pid
 log /var/log/openvpn-p2p-{{ vpn.name }}.log
 status /var/run/openvpn/status-p2p-{{ vpn.name }} 10
 verb 4
