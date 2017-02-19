@@ -51,3 +51,13 @@
   loop_control:
     loop_var: vpn
 
+- name: configure port for selinux
+  seport:
+    state: present
+    setype: openvpn_port_t
+    ports: "{{ vpn.port }}"
+    proto: "{{ vpn.protocol }}"
+    reload: True
+  with_items: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
