@@ -3,6 +3,7 @@
   hostname: name={{ inventory_hostname }}
   tags:
     - network:hostname
+
 - name: configure base interfaces
   template:
     dest: /etc/sysconfig/network-scripts/ifcfg-{{ item.name }}
@@ -10,7 +11,7 @@
     group: root
     mode: 0644
     src: templates/ifcfg-base.j2
-  with_items: "{{ network.interfaces.get('physical', []) }}"
+  with_items: "{{ network.get('interfaces', {}).get('physical', []) }}"
   notify: restart networking
   tags:
     - network:interfaces
@@ -21,7 +22,7 @@
     group: root
     mode: 0644
     src: templates/ifcfg-tap.j2
-  with_items: "{{ network.interfaces.get('tap', []) }}"
+  with_items: "{{ network.get('interfaces', {}).get('tap', []) }}"
   notify: restart networking
   tags:
     - network:interfaces
@@ -32,7 +33,7 @@
     group: root
     mode: 0644
     src: templates/ifcfg-bond.j2
-  with_items: "{{ network.interfaces.get('bonds', []) }}"
+  with_items: "{{ network.get('interfaces', {}).get('bonds', []) }}"
   notify: restart networking
   tags:
     - network:interfaces
@@ -43,7 +44,7 @@
     group: root
     mode: 0644
     src: templates/ifcfg-bond-vlan.j2
-  with_items: "{{ network.interfaces.get('bond_vlans', []) }}"
+  with_items: "{{ network.get('interfaces', {}).get('bond_vlans', []) }}"
   notify: restart networking
   tags:
     - network:interfaces
@@ -58,7 +59,7 @@
     mode: 0644
     src: templates/ifcfg-bond-vlan-for-bridge.j2
   when: "{{ item.get('vlan_id') }}"
-  with_items: "{{ network.interfaces.get('bridges', []) }}"
+  with_items: "{{ network.get('interfaces', {}).get('bridges', []) }}"
   notify: restart networking
   tags:
     - network:interfaces
@@ -69,7 +70,7 @@
     group: root
     mode: 0644
     src: templates/ifcfg-bridge.j2
-  with_items: "{{ network.interfaces.get('bridges', []) }}"
+  with_items: "{{ network.get('interfaces', {}).get('bridges', []) }}"
   notify: restart networking
   tags:
     - network:interfaces
