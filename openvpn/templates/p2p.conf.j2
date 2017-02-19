@@ -8,6 +8,7 @@ dev {{ vpn.devname }}
 dev-type {{ vpn.dev }}
 
 # files
+cd /etc/openvpn
 secret keys/{{ vpn.name }}/secret.key
 
 {% if vpn.my_role == 'client' %}
